@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { View, Text } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { useDidShow } from '@tarojs/taro'
 import { NavBar } from '../../components/NavBar'
 import { TabBar } from '../../components/TabBar'
@@ -7,8 +8,8 @@ import { goodsApi, GoodsItem } from '../../utils/request'
 import './index.css'
 
 const TAB_BAR_ITEMS = [
-  { pagePath: 'pages/index/index', text: '首页', icon: 'home' },
-  { pagePath: 'pages/goods_list/index', text: '精选', icon: 'grid' },
+  { pagePath: 'pages/index/index', text: '发现', icon: 'home' },
+  { pagePath: 'pages/category/index', text: '分类', icon: 'grid' },
   { pagePath: 'pages/cart/index', text: '购物车', icon: 'cart' },
   { pagePath: 'pages/profile/index', text: '我的', icon: 'user' }
 ]
@@ -21,6 +22,8 @@ const SORT_OPTIONS = [
 ]
 
 export default function GoodsList() {
+  const params = Taro.getCurrentInstance().router?.params as { keyword?: string; category_id?: string } | undefined
+
   const [goods, setGoods] = useState<GoodsItem[]>([])
   const [sort, setSort] = useState<string>('default')
   const [loading, setLoading] = useState(false)
@@ -28,7 +31,12 @@ export default function GoodsList() {
   async function fetchGoods() {
     setLoading(true)
     try {
-      const res = await goodsApi.list({ sort: sort as 'default' | 'price_asc' | 'price_desc' | 'sales', page_size: 20 })
+      const res = await goodsApi.list({
+        keyword: params?.keyword,
+        category_id: params?.category_id ? Number(params.category_id) : undefined,
+        sort: sort as 'default' | 'price_asc' | 'price_desc' | 'sales',
+        page_size: 20
+      })
       setGoods(res.items)
     } catch {
       // 错误已由 request 统一处理
@@ -41,15 +49,24 @@ export default function GoodsList() {
     fetchGoods()
   })
 
+  React.useEffect(() => {
+    fetchGoods()
+  }, [sort])
+
   function handleSortChange(newSort: string) {
     setSort(newSort)
-    fetchGoods()
+  }
+
+  function handleGoodsClick(goodsId: number) {
+    Taro.navigateTo({ url: `/pages/goods_detail/index?goodsId=${goodsId}` })
   }
 
   return (
     <View className="page-goods-list">
-      <NavBar title="精选" />
+      <NavBar title={params?.keyword ? `搜索：${params.keyword}` : '精选'} />
+
       <View className="page-goods-list__content">
+        {/* 筛选栏 */}
         <View className="goods-filter">
           {SORT_OPTIONS.map(opt => (
             <Text
@@ -62,6 +79,7 @@ export default function GoodsList() {
           ))}
         </View>
 
+        {/* 商品列表 */}
         {loading ? (
           <View className="goods-loading">
             <Text className="caption">加载中...</Text>
@@ -76,34 +94,28 @@ export default function GoodsList() {
               <View
                 key={item.goods_id}
                 className="goods-card"
-                onClick={() => {
-                  // 跳转商品详情
-                }}
+                onClick={() => handleGoodsClick(item.goods_id)}
               >
-                <View className="goods-card__image-wrap">
-                  {item.thumbnail ? (
-                    <View className="goods-card__image" style={`background-image: url(${item.thumbnail})`} />
-                  ) : (
-                    <View className="goods-card__image goods-card__image--placeholder" />
-                  )}
+                <View className="goods-card__image">
+                  <View className="goods-card__image-placeholder" />
                 </View>
-                <View className="goods-card__body">
-                  <Text className="goods-card__title">{item.goods_name}</Text>
+                <View className="goods-card__info">
+                  <Text className="goods-card__name" numberOfLines={2}>{item.goods_name}</Text>
                   <View className="goods-card__price-row">
-                    <Text className="goods-card__price">¥{item.price}</Text>
+                    <Text className="goods-card__price">¥{(item.price / 100).toFixed(2)}</Text>
                     {item.original_price > item.price && (
-                      <Text className="goods-card__original-price">¥{item.original_price}</Text>
+                      <Text className="goods-card__original-price">
+                        ¥{(item.original_price / 100).toFixed(2)}
+                      </Text>
                     )}
                   </View>
-                  {item.sales > 0 && (
-                    <Text className="goods-card__sales">已售 {item.sales}</Text>
-                  )}
                 </View>
               </View>
             ))}
           </View>
         )}
       </View>
+
       <TabBar items={TAB_BAR_ITEMS} />
     </View>
   )

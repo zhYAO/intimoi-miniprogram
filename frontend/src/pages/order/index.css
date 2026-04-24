@@ -1,6 +1,8 @@
 .page-order {
   min-height: 100vh;
   background: var(--bg-page);
+  padding-bottom: calc(56px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
 }
 
 .page-order__content {
@@ -8,22 +10,27 @@
   padding-top: calc(44px + env(safe-area-inset-top));
 }
 
+/* Tab 栏 */
 .order-tabs {
   display: flex;
-  gap: var(--space-6);
-  padding: var(--space-4) var(--space-5);
+  background: var(--bg-card);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .order-tab {
+  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: var(--text-base);
   color: var(--fg-tertiary);
-  padding-bottom: var(--space-2);
   position: relative;
+  transition: color 300ms ease-out;
 }
 
 .order-tab--active {
-  color: var(--fg-primary);
+  color: var(--lavender-800);
   font-weight: var(--weight-medium);
 }
 
@@ -31,12 +38,14 @@
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 2px;
   background: var(--lavender-800);
 }
 
+/* 列表 */
 .order-loading,
 .order-empty {
   display: flex;
@@ -46,5 +55,111 @@
 }
 
 .order-list {
-  padding: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* 订单卡片 */
+.order-card {
+  background: var(--bg-card);
+  overflow: hidden;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.order-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-card__no {
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+}
+
+.order-card__status {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.order-card__goods {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.order-card__goods-item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.order-card__goods-img-placeholder {
+  width: 56px;
+  height: 70px;
+  background: var(--bg-muted);
+  flex-shrink: 0;
+}
+
+.order-card__goods-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.order-card__goods-name {
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.order-card__goods-price {
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.order-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.order-card__time {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+.order-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.order-card__action {
+  font-size: var(--text-sm);
+  padding: 4px 12px;
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-secondary);
+}
+
+.order-card__action--text {
+  color: var(--fg-tertiary);
+}
+
+.order-card__action--primary {
+  background: var(--lavender-800);
+  color: var(--neutral-0);
+  border-color: var(--lavender-800);
 }
