@@ -1,0 +1,14 @@
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-none);
+  overflow: hidden;
+}
+
+.card--bordered {
+  border: 1px solid var(--border-subtle);
+  box-shadow: none;
+}
+
+.card--elevated {
+  box-shadow: var(--shadow-md);
+}
