@@ -1,0 +1,61 @@
+@import './design-system.css';
+
+page {
+  background: var(--bg-page);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { margin: 0; font-weight: normal; }
+
+.eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.caption {
+  font-size: var(--text-sm);
+  color: var(--fg-tertiary);
+}
+
+.price {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.price--sale { color: var(--fg-price); }
+.price--strike { color: var(--fg-muted); text-decoration: line-through; font-weight: var(--weight-regular); font-size: var(--text-sm); }
+
+.divider { height: 1px; background: var(--border-subtle); border: none; margin: 0; }
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.glow-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.glow-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, var(--lavender-300), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 40%, var(--lavender-200), transparent 70%),
+    var(--lavender-100);
+  pointer-events: none;
+}

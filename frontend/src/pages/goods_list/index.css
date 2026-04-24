@@ -1,0 +1,120 @@
+.page-goods-list {
+  min-height: 100vh;
+  background: var(--bg-page);
+  padding-bottom: calc(56px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
+}
+
+.page-goods-list__content {
+  padding-top: calc(44px + constant(safe-area-inset-top));
+  padding-top: calc(44px + env(safe-area-inset-top));
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+}
+
+.goods-filter {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--space-4);
+}
+
+.goods-filter__item {
+  font-size: var(--text-base);
+  color: var(--fg-tertiary);
+  position: relative;
+  padding-bottom: var(--space-2);
+}
+
+.goods-filter__item--active {
+  color: var(--fg-primary);
+  font-weight: var(--weight-medium);
+}
+
+.goods-filter__item--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--lavender-800);
+}
+
+.goods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.goods-card {
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.goods-card__image-wrap {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--bg-muted);
+  overflow: hidden;
+}
+
+.goods-card__image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--bg-muted);
+}
+
+.goods-card__image--placeholder {
+  background: var(--lavender-100);
+}
+
+.goods-card__body {
+  padding: var(--space-3);
+}
+
+.goods-card__title {
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+  display: block;
+  margin-bottom: var(--space-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.goods-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.goods-card__price {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--fg-primary);
+}
+
+.goods-card__original-price {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-decoration: line-through;
+}
+
+.goods-card__sales {
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  display: block;
+  margin-top: var(--space-1);
+}
+
+.goods-loading,
+.goods-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+}
