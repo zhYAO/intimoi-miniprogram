@@ -1,0 +1,313 @@
+/* ============================================================
+   intimoi 双相 · 设计系统
+   colors_and_type.css — 颜色与字体变量
+   ============================================================ */
+
+:root {
+  /* ---------- 色彩系统：主色（薰衣草淡紫） ---------- */
+  --lavender-50:  #FAF7FD;  /* 近白，页面底色备选 */
+  --lavender-100: #F5F1FA;  /* 主页面底色 */
+  --lavender-200: #EDE5F5;  /* 卡片浅底 */
+  --lavender-300: #E8DFF5;  /* 光晕渐变起点 */
+  --lavender-400: #D4C3EC;  /* 柔和紫 */
+  --lavender-500: #B8A3E0;  /* 品牌主色 */
+  --lavender-600: #9B84CE;  /* 主色深一档（按钮 hover） */
+  --lavender-700: #7A66AE;  /* 强调 */
+  --lavender-800: #6B5B8E;  /* 深紫：主要文字、按钮底色 */
+  --lavender-900: #4A3D6B;  /* 近黑紫：标题、最深文字 */
+
+  /* ---------- 中性色（暖灰，避免纯黑） ---------- */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #FAFAFA;
+  --neutral-100: #F5F4F6;
+  --neutral-200: #EBEAEE;
+  --neutral-300: #D9D7DE;
+  --neutral-400: #B8B5BF;
+  --neutral-500: #8E8A96;
+  --neutral-600: #6E6A76;
+  --neutral-700: #4F4C55;
+  --neutral-800: #35333A;
+  --neutral-900: #1E1D21;
+
+  /* ---------- 语义色（极克制） ---------- */
+  --price-red:   #B23A48;   /* 价格、支付失败 */
+  --success:     #5C8D76;   /* 支付成功（低饱和墨绿，非亮绿） */
+  --warning:     #B88B4A;   /* 库存紧张 */
+
+  /* ---------- 前景 / 背景语义变量 ---------- */
+  --bg-page:       var(--lavender-100);
+  --bg-card:       var(--neutral-0);
+  --bg-elevated:   var(--neutral-0);
+  --bg-muted:      var(--neutral-100);
+
+  /* 毛玻璃层 */
+  --glass-bg:      rgba(255, 255, 255, 0.5);
+  --glass-bg-dark: rgba(74, 61, 107, 0.4);
+  --glass-blur:    blur(20px) saturate(180%);
+
+  --fg-primary:    var(--lavender-900);
+  --fg-secondary:  var(--neutral-700);
+  --fg-tertiary:   var(--neutral-500);
+  --fg-muted:      var(--neutral-400);
+  --fg-brand:      var(--lavender-800);
+  --fg-on-brand:   var(--neutral-0);
+  --fg-price:      var(--price-red);
+
+  --border-subtle: rgba(107, 91, 142, 0.12);
+  --border-strong: rgba(107, 91, 142, 0.24);
+  --border-focus:  var(--lavender-800);
+
+  /* ---------- 阴影系统 ---------- */
+  --shadow-sm:  0 1px 2px rgba(107, 91, 142, 0.04);
+  --shadow-md:  0 4px 16px rgba(107, 91, 142, 0.06);
+  --shadow-lg:  0 12px 40px rgba(107, 91, 142, 0.08);
+  --shadow-xl:  0 24px 64px rgba(107, 91, 142, 0.10);
+
+  /* ---------- 圆角（品牌主张：0） ---------- */
+  --radius-none:  0;
+  --radius-sm:    0;           /* 卡片、按钮、输入框 */
+  --radius-md:    0;
+  --radius-lg:    0;
+  --radius-pill:  9999px;      /* 仅用于徽章数字、头像 */
+  --radius-full:  50%;         /* 头像 */
+
+  /* ---------- 间距（基础模数 4px） ---------- */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;   /* 页面安全边距 */
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+
+  /* ---------- 字体 ---------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", "Source Han Sans SC",
+               "Noto Sans CJK SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: "PingFang SC", "Songti SC", "SimSun", serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-brand: "Times New Roman", "Noto Serif", Georgia, serif;  /* logo 字母使用 */
+
+  /* ---------- 字号 / 行高 / 字重 ---------- */
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-md:   15px;
+  --text-lg:   17px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  28px;
+  --text-4xl:  34px;
+  --text-5xl:  48px;
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.5;
+  --leading-loose:  1.7;
+
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* 字距 — 中文微负、英文稍正 */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-widest: 0.18em;   /* 用于 logo、全大写英文 */
+
+  /* ---------- 动效 ---------- */
+  --ease-out:   cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in:    cubic-bezier(0.8, 0, 0.8, 0.2);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast:   150ms;
+  --dur-base:   300ms;
+  --dur-slow:   500ms;
+}
+
+/* ============================================================
+   语义化样式类（可直接使用）
+   ============================================================ */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, .h1 {
+  font-size: var(--text-4xl);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+.eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+}
+
+.body, p {
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+.caption {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--fg-tertiary);
+}
+
+.price {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-normal);
+}
+
+.price--sale {
+  color: var(--fg-price);
+}
+
+.price--strike {
+  color: var(--fg-muted);
+  text-decoration: line-through;
+  font-weight: var(--weight-regular);
+  font-size: var(--text-sm);
+}
+
+/* 品牌 logo 文字（用于 logo/页眉） */
+.brand-wordmark {
+  font-family: var(--font-brand);
+  font-weight: var(--weight-light);
+  letter-spacing: var(--tracking-widest);
+  text-transform: lowercase;
+}
+
+/* ============================================================
+   通用组件类
+   ============================================================ */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.glass-dark {
+  background: var(--glass-bg-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.btn {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  padding: var(--space-4) var(--space-6);
+  border: none;
+  border-radius: var(--radius-none);
+  cursor: pointer;
+  transition: opacity var(--dur-base) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.btn--primary {
+  background: var(--lavender-800);
+  color: var(--fg-on-brand);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--fg-primary);
+  border: 1px solid var(--border-strong);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--fg-brand);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-none);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+  border: none;
+  margin: 0;
+}
+
+/* 页面柔光背景（首页用） */
+.glow-bg {
+  position: relative;
+  isolation: isolate;
+}
+.glow-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, var(--lavender-300), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 40%, var(--lavender-200), transparent 70%),
+    var(--lavender-100);
+  pointer-events: none;
+}
