@@ -1,7 +1,8 @@
 # intimoi 小程序 PRD
 
-> 文档版本：v1.0
+> 文档版本：v1.1
 > 更新日期：2026-04-24
+> 更新内容：1）新增环境切换方案（.env + Taro编译标签）2）移除积分/会员/优惠券功能
 > 品牌：intimoi 双相 — 高端精选电商
 > 目标用户：25–40 岁女性，审美成熟，客单价 ¥800–3000
 > 载体：微信小程序（iOS / Android）
@@ -404,10 +405,8 @@
    - 数字角标显示对应状态数量（深紫小圆点）
 
 3. **功能列表**
-   - 会员中心
    - 收货地址管理
    - 我的收藏
-   - 优惠券
    - 客服与帮助
    - 设置
 
@@ -562,6 +561,78 @@
 | **缓存策略** | 商品列表可本地缓存，购物车实时同步 |
 | **HTTPS** | 所有请求必须 HTTPS |
 | **兼容** | 微信小程序基础库 2.20+ |
+
+---
+
+### 5.1 环境切换方案
+
+小程序需同时维护**测试环境**和**生产环境**，通过 Taro 编译标签区分。
+
+#### 目录结构
+
+```
+miniprogram/
+├── config/
+│   ├── index.ts          ← 通用配置（跨环境共享）
+│   ├── dev.ts            ← 开发/测试环境配置
+│   ├── prod.ts           ← 生产环境配置
+│   └── test.ts           ← 预发布/验收环境配置
+└── src/
+    ├── constants/
+    │   └── env.ts         ← 环境变量统一导出
+```
+
+#### `.env` 文件（各环境独立）
+
+```bash
+# .env.dev（开发/测试）
+TARO_APP_API_BASE=https://api-test.intimoi.com
+TARO_APP_WDT_BASE=https://openapitest.huice.com/openapi/
+
+# .env.prod（生产）
+TARO_APP_API_BASE=https://api.intimoi.com
+TARO_APP_WDT_BASE=https://openapi.huice.com/openapi/
+```
+
+#### Taro 编译标签切换
+
+在 `package.json` 中配置：
+
+```json
+{
+  "scripts": {
+    "dev:weapp": "taro build --type weapp --watch",
+    "dev:weapp:test": "TARO_ENV=test taro build --type weapp --watch",
+    "build:weapp": "TARO_ENV=prod taro build --type weapp"
+  }
+}
+```
+
+#### `src/constants/env.ts` 统一导出
+
+```typescript
+// 根据编译时注入的 TARO_APP_* 变量自动读取
+export const API_BASE = process.env.TARO_APP_API_BASE
+export const WDT_BASE = process.env.TARO_APP_WDT_BASE
+
+// 环境标识（用于日志/调试）
+export const ENV = process.env.TARO_APP_ENV ?? 'dev'
+```
+
+#### 环境说明
+
+| 环境 | 触发方式 | API 指向 | 使用场景 |
+|---|---|---|---|
+| dev | `npm run dev:weapp` | 测试环境 API | 本地开发 |
+| test | `TARO_ENV=test` | 预发布 API | 验收测试 |
+| prod | `TARO_ENV=prod` | 生产环境 API | 正式发布 |
+
+#### 验收标准
+
+- [ ] `dev` / `test` / `prod` 三套环境编译结果不同
+- [ ] `.env` 文件不提交到仓库（加入 `.gitignore`）
+- [ ] 切换环境后重新编译，无需改代码
+- [ ] WDT 接口 base URL 随环境切换正确变化
 
 ---
 
