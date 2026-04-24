@@ -8,17 +8,16 @@ import { memberApi } from '../../utils/request'
 import './index.css'
 
 const TAB_BAR_ITEMS = [
-  { pagePath: 'pages/index/index', text: '首页', icon: 'home' },
-  { pagePath: 'pages/goods_list/index', text: '精选', icon: 'grid' },
+  { pagePath: 'pages/index/index', text: '发现', icon: 'home' },
+  { pagePath: 'pages/category/index', text: '分类', icon: 'grid' },
   { pagePath: 'pages/cart/index', text: '购物车', icon: 'cart' },
   { pagePath: 'pages/profile/index', text: '我的', icon: 'user' }
 ]
 
 const MENU_ITEMS = [
-  { key: 'orders', label: '我的订单' },
-  { key: 'address', label: '收货地址' },
-  { key: 'favorites', label: '我的收藏' },
-  { key: 'settings', label: '设置' }
+  { key: 'orders', label: '我的订单', url: '/pages/order/index' },
+  { key: 'address', label: '收货地址', url: '/pages/address/index' },
+  { key: 'favorites', label: '我的收藏', url: '/pages/favorites/index' }
 ]
 
 const LEVEL_MAP: Record<number, string> = {
@@ -122,9 +121,13 @@ export default function Profile() {
         {/* 菜单 */}
         <View className="profile-menu">
           {MENU_ITEMS.map(item => (
-            <View key={item.key} className="profile-menu__item">
+            <View
+              key={item.key}
+              className="profile-menu__item"
+              onClick={() => item.url && Taro.navigateTo({ url: item.url })}
+            >
               <Text className="profile-menu__label">{item.label}</Text>
-              <Text className="profile-menu__arrow">→</Text>
+              <Text className="profile-menu__arrow">›</Text>
             </View>
           ))}
         </View>

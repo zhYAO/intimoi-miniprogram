@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Image } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { useDidShow } from '@tarojs/taro'
 import { NavBar } from '../../components/NavBar'
 import { TabBar } from '../../components/TabBar'
@@ -8,8 +9,8 @@ import { cartApi, CartItem } from '../../utils/request'
 import './index.css'
 
 const TAB_BAR_ITEMS = [
-  { pagePath: 'pages/index/index', text: '首页', icon: 'home' },
-  { pagePath: 'pages/goods_list/index', text: '精选', icon: 'grid' },
+  { pagePath: 'pages/index/index', text: '发现', icon: 'home' },
+  { pagePath: 'pages/category/index', text: '分类', icon: 'grid' },
   { pagePath: 'pages/cart/index', text: '购物车', icon: 'cart' },
   { pagePath: 'pages/profile/index', text: '我的', icon: 'user' }
 ]
@@ -158,7 +159,7 @@ export default function Cart() {
               <Button
                 type="primary"
                 disabled={selectedItems.length === 0}
-                onClick={() => {}}
+                onClick={() => Taro.navigateTo({ url: '/pages/order_confirm/index' })}
               >
                 结算 {selectedItems.length > 0 && `(${selectedItems.length})`}
               </Button>

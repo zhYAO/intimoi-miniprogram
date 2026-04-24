@@ -1,0 +1,110 @@
+.page-aftersale-apply {
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.page-aftersale-apply__content {
+  padding-top: calc(44px + constant(safe-area-inset-top));
+  padding-top: calc(44px + env(safe-area-inset-top));
+  padding: var(--space-5);
+}
+
+.apply-section {
+  margin-bottom: var(--space-6);
+}
+
+.apply-type-options {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.apply-type-option {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.apply-type-option--active {
+  background: var(--lavender-800);
+  border-color: var(--lavender-800);
+}
+
+.apply-type-option__text {
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.apply-type-option--active .apply-type-option__text {
+  color: var(--neutral-0);
+}
+
+.apply-reason-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.apply-reason-option {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.apply-reason-option--active {
+  background: var(--lavender-200);
+  border-color: var(--lavender-800);
+}
+
+.apply-reason-option__text {
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+}
+
+.apply-reason-option--active .apply-reason-option__text {
+  color: var(--lavender-800);
+  font-weight: var(--weight-medium);
+}
+
+.apply-desc {
+  margin-top: var(--space-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3);
+}
+
+.apply-desc__input {
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+}
+
+.apply-desc__count {
+  display: block;
+  text-align: right;
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  margin-top: var(--space-2);
+}
+
+.apply-upload {
+  margin-top: var(--space-3);
+}
+
+.apply-upload__placeholder {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-muted);
+  border: 1px dashed var(--border-strong);
+}
+
+.apply-submit {
+  margin-top: var(--space-8);
+}

@@ -14,21 +14,21 @@
 
 .goods-filter {
   display: flex;
-  gap: var(--space-6);
+  gap: var(--space-5);
   padding: var(--space-4) 0;
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: var(--space-4);
 }
 
 .goods-filter__item {
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   color: var(--fg-tertiary);
   position: relative;
-  padding-bottom: var(--space-2);
+  padding-bottom: 2px;
 }
 
 .goods-filter__item--active {
-  color: var(--fg-primary);
+  color: var(--lavender-800);
   font-weight: var(--weight-medium);
 }
 
@@ -38,52 +38,49 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: var(--lavender-800);
 }
 
 .goods-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
 }
 
 .goods-card {
   background: var(--bg-card);
   overflow: hidden;
-}
-
-.goods-card__image-wrap {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  background: var(--bg-muted);
-  overflow: hidden;
+  cursor: pointer;
 }
 
 .goods-card__image {
   width: 100%;
+  aspect-ratio: 3 / 4;
+}
+
+.goods-card__image-placeholder {
+  width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--bg-muted);
+  background: var(--lavender-200);
 }
 
-.goods-card__image--placeholder {
-  background: var(--lavender-100);
-}
-
-.goods-card__body {
+.goods-card__info {
   padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.goods-card__title {
+.goods-card__name {
   font-size: var(--text-sm);
   color: var(--fg-primary);
-  display: block;
-  margin-bottom: var(--space-2);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .goods-card__price-row {
@@ -95,20 +92,13 @@
 .goods-card__price {
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
-  color: var(--fg-primary);
+  color: var(--fg-price);
 }
 
 .goods-card__original-price {
   font-size: var(--text-xs);
   color: var(--fg-muted);
   text-decoration: line-through;
-}
-
-.goods-card__sales {
-  font-size: var(--text-xs);
-  color: var(--fg-tertiary);
-  display: block;
-  margin-top: var(--space-1);
 }
 
 .goods-loading,
