@@ -1,8 +1,9 @@
 # intimoi 小程序 API 契约文档
 
-> 版本：v1.1.0
-> 日期：2026-04-24
-> 状态：草稿（已按CEO反馈更新）
+> 版本：v1.2.0
+> 日期：2026-04-25
+> 状态：草稿（QA审查后修复）
+> 更新说明：v1.2.0 修复 QA 审查问题：购物车 stock 来源说明、商品详情 stock 计算方式、open_id 字段、错误码覆盖表、appsecret 加密说明、category FK 说明
 
 ---
 
@@ -67,6 +68,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | delivery_term | int | ✅ | 发货条件；`2`=款到发货 |
 | trade_time | string | ✅ | 下单时间，格式 `YYYY-MM-DD HH:MM:SS` |
 | buyer_nick | string | ✅ | 买家昵称（微信昵称） |
+| open_id | string | ✅ | 微信 OpenID（用于 WDT 标识客户） |
 | receiver_mobile | string | ✅ | 收货人手机号 |
 | receiver_name | string | ✅ | 收货人姓名 |
 | receiver_province | string | ✅ | 收货省份 |
@@ -103,7 +105,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 ```json
 {
   "shop_id": "23",
-  "trade_list": "[{\"tid\":\"WX202604240001\",\"trade_status\":20,\"pay_status\":\"1\",\"delivery_term\":2,\"trade_time\":\"2026-04-24 15:00:00\",\"buyer_nick\":\"小鱼\",\"receiver_mobile\":\"13800138000\",\"receiver_name\":\"李晓\",\"receiver_province\":\"上海市\",\"receiver_city\":\"上海市\",\"receiver_district\":\"浦东新区\",\"receiver_address\":\"东方路123号\",\"logistics_type\":4,\"post_amount\":0,\"cod_amount\":0,\"paid\":1280,\"order_list\":[{\"oid\":\"WX202604240001-1\",\"num\":1,\"price\":1280,\"status\":30,\"refund_status\":0,\"goods_id\":\"18344\",\"spec_id\":\"18656\",\"goods_no\":\"GH001\",\"goods_name\":\"精粹修护精华液\",\"spec_no\":\"GHSKU001\",\"spec_name\":\"30ml\",\"discount\":0,\"adjust_amount\":0,\"share_discount\":0}]}]"
+  "trade_list": "[{\"tid\":\"WX202604240001\",\"trade_status\":20,\"pay_status\":\"1\",\"delivery_term\":2,\"trade_time\":\"2026-04-24 15:00:00\",\"buyer_nick\":\"小鱼\",\"open_id\":\"oXXXXXXXXXXXXXXXXX\",\"receiver_mobile\":\"13800138000\",\"receiver_name\":\"李晓\",\"receiver_province\":\"上海市\",\"receiver_city\":\"上海市\",\"receiver_district\":\"浦东新区\",\"receiver_address\":\"东方路123号\",\"logistics_type\":4,\"post_amount\":0,\"cod_amount\":0,\"paid\":1280,\"order_list\":[{\"oid\":\"WX202604240001-1\",\"num\":1,\"price\":1280,\"status\":30,\"refund_status\":0,\"goods_id\":\"18344\",\"spec_id\":\"18656\",\"goods_no\":\"GH001\",\"goods_name\":\"精粹修护精华液\",\"spec_no\":\"GHSKU001\",\"spec_name\":\"30ml\",\"discount\":0,\"adjust_amount\":0,\"share_discount\":0}]}]"
 }
 ```
 
@@ -407,7 +409,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | spec_name | string | 规格名称 |
 | price | number | 单价 |
 | num | int | 数量 |
-| stock | int | 当前库存 |
+| stock | int | 当前库存（通过 JOIN goods_spec 实时查询，非 cart 表自有字段） |
 | thumbnail | string | 商品缩略图 |
 | selected | boolean | 是否选中结算 |
 
@@ -568,6 +570,12 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | original_price | number | 划线价 |
 | thumbnail | string | 缩略图 |
 | sales | int | 销量 |
+| is_on_sale | int | 上架状态：1=上架，0=下架 |
+| stock | int | 总库存（所有规格库存之和） |
+
+**前端展示约定**：
+- `is_on_sale = 0` 时，商品卡片显示"已下架"状态，不可加入购物车
+- `stock = 0` 时，显示"售罄"，仍可查看但不可下单
 
 **响应示例**：
 
@@ -616,7 +624,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | data.description | string | 商品详情（富文本） |
 | data.images | array | 商品图片列表 |
 | data.specs | array | 规格列表 |
-| data.stock | int | 总库存 |
+| data.stock | int | 总库存 = 各规格（goods_spec）库存之和，由后端计算返回，goods 表不存此字段 |
 | data.sales | int | 销量 |
 
 **响应示例**：
@@ -773,6 +781,27 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | 1002 | WDT 签名校验失败 |
 | 1003 | WDT 返回数据解析失败 |
 | 500 | 服务器内部错误 |
+
+**各接口错误码覆盖**：
+
+| 接口 | 返回错误码 |
+|------|-----------|
+| `POST /api/v1/wdt/trade/push` | 0, 400, 1001, 1002, 1003, 500 |
+| `POST /api/v1/wdt/trade/query` | 0, 400, 1001, 1002, 1003, 500 |
+| `POST /api/v1/wdt/weight/push` | 0, 400, 1001, 1002, 1003, 500 |
+| `POST /api/v1/member/login` | 0, 400, 500 |
+| `GET /api/v1/member/info` | 0, 401, 404, 500 |
+| `PUT /api/v1/member/info` | 0, 400, 401, 500 |
+| `GET /api/v1/cart` | 0, 401, 500 |
+| `POST /api/v1/cart` | 0, 400, 401, 500 |
+| `PUT /api/v1/cart/{item_id}` | 0, 400, 401, 404, 500 |
+| `DELETE /api/v1/cart/{item_id}` | 0, 401, 404, 500 |
+| `PUT /api/v1/cart/select-all` | 0, 401, 500 |
+| `GET /api/v1/goods` | 0, 500 |
+| `GET /api/v1/goods/{goods_id}` | 0, 404, 500 |
+| `GET /api/v1/favorites` | 0, 401, 500 |
+| `POST /api/v1/favorites` | 0, 400, 401, 404, 500 |
+| `DELETE /api/v1/favorites/{goods_id}` | 0, 401, 404, 500 |
 
 ### 3.3 WDT 签名机制（SDK 封装）
 

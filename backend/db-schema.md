@@ -1,9 +1,9 @@
 # intimoi 小程序数据库表结构设计
 
-> 版本：v1.1.0
-> 日期：2026-04-24
+> 版本：v1.2.0
+> 日期：2026-04-25
 > 数据库：MySQL 8.0+
-> 更新说明：v1.1.0 删除积分系统（member_points_log 表及相关接口），生产 WDT 地址留空
+> 更新说明：v1.2.0 修复 QA 审查问题：删除积分系统（v1.1.0），appsecret 加密说明、category 自引用 FK 说明
 
 ---
 
@@ -219,7 +219,7 @@ goods (商品缓存)
 | id | BIGINT | PK, AUTO_INCREMENT | 配置 ID |
 | env | ENUM('test','prod') | UNIQUE, NOT NULL | 环境：测试/正式 |
 | appkey | VARCHAR(64) | NOT NULL | WDT AppKey |
-| appsecret | VARCHAR(128) | NOT NULL | WDT AppSecret（建议加密存储） |
+| appsecret | VARCHAR(128) | NOT NULL | WDT AppSecret（存储前使用 AES-256 加密，密钥由环境变量或 KMS 管理） |
 | sid | VARCHAR(32) | NOT NULL | WDT SID |
 | base_url | VARCHAR(128) | NOT NULL | API Base URL |
 | is_active | TINYINT | NOT NULL, DEFAULT 1 | 是否启用 |
@@ -233,7 +233,7 @@ goods (商品缓存)
 |--------|------|------|------|
 | id | BIGINT | PK, AUTO_INCREMENT | 分类 ID |
 | name | VARCHAR(64) | NOT NULL | 分类名称 |
-| parent_id | BIGINT | FK → category.id, NULL | 父分类 ID（顶级为 NULL） |
+| parent_id | BIGINT | FK → category.id, NULL（自引用，顶级分类为 NULL） | 父分类 ID |
 | sort | INT | NOT NULL, DEFAULT 0 | 排序（越小越靠前） |
 | is_active | TINYINT | NOT NULL, DEFAULT 1 | 是否启用 |
 | created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 创建时间 |
