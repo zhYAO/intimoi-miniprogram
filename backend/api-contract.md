@@ -37,6 +37,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
    - 2.2 购物车
    - 2.3 商品
    - 2.4 收藏
+   - 2.5 收货地址
 3. [通用约定](#3-通用约定)
 
 ---
@@ -409,7 +410,7 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 | spec_name | string | 规格名称 |
 | price | number | 单价 |
 | num | int | 数量 |
-| stock | int | 当前库存（通过 JOIN goods_spec 实时查询，非 cart 表自有字段） |
+| stock | int | 当前实时库存（查询时通过 JOIN goods_spec 回填至 cart 表的 stock 字段，不持久化） |
 | thumbnail | string | 商品缩略图 |
 | selected | boolean | 是否选中结算 |
 
@@ -748,6 +749,162 @@ intimoi 小程序是连接微信前端与 WDT 旺店通 ERP 的桥接层。
 {
   "code": 0,
   "message": "已取消收藏",
+  "data": null
+}
+```
+
+---
+
+### 2.5 收货地址
+
+> 会员的收货地址管理，订单确认页展示已选地址。
+
+#### 2.5.1 获取收货地址列表
+
+**路径**：`GET /api/v1/addresses`
+
+**请求 Header**：`Authorization: Bearer {token}`
+
+**响应参数**：
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| code | int | 状态码 |
+| message | string | 状态信息 |
+| data.items | array | 地址列表 |
+| data.default_id | int | 当前默认地址 ID（无默认则 null） |
+
+**items 子结构**：
+
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| id | int | 地址 ID |
+| receiver_name | string | 收货人姓名 |
+| receiver_mobile | string | 联系电话 |
+| receiver_province | string | 省份 |
+| receiver_city | string | 城市 |
+| receiver_district | string | 区县 |
+| receiver_address | string | 详细地址 |
+| is_default | boolean | 是否默认地址 |
+| created_at | string | 添加时间 |
+
+**响应示例**：
+
+```json
+{
+  "code": 0,
+  "message": "操作成功",
+  "data": {
+    "items": [
+      {
+        "id": 1,
+        "receiver_name": "李晓",
+        "receiver_mobile": "13800138000",
+        "receiver_province": "上海市",
+        "receiver_city": "上海市",
+        "receiver_district": "浦东新区",
+        "receiver_address": "东方路123号",
+        "is_default": true,
+        "created_at": "2026-04-01 10:00:00"
+      }
+    ],
+    "default_id": 1
+  }
+}
+```
+
+---
+
+#### 2.5.2 新增收货地址
+
+**路径**：`POST /api/v1/addresses`
+
+**请求 Header**：`Authorization: Bearer {token}`
+
+**请求参数**：
+
+| 字段名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| receiver_name | string | ✅ | 收货人姓名 |
+| receiver_mobile | string | ✅ | 联系电话 |
+| receiver_province | string | ✅ | 省份 |
+| receiver_city | string | ✅ | 城市 |
+| receiver_district | string | ✅ | 区县 |
+| receiver_address | string | ✅ | 详细地址 |
+| is_default | boolean | 否 | 是否设为默认地址，默认 `false` |
+
+**响应示例**：
+
+```json
+{
+  "code": 0,
+  "message": "地址已添加",
+  "data": { "id": 5 }
+}
+```
+
+---
+
+#### 2.5.3 更新收货地址
+
+**路径**：`PUT /api/v1/addresses/{address_id}`
+
+**请求 Header**：`Authorization: Bearer {token}`
+
+**请求参数**：
+
+| 字段名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| receiver_name | string | 否 | 收货人姓名 |
+| receiver_mobile | string | 否 | 联系电话 |
+| receiver_province | string | 否 | 省份 |
+| receiver_city | string | 否 | 城市 |
+| receiver_district | string | 否 | 区县 |
+| receiver_address | string | 否 | 详细地址 |
+| is_default | boolean | 否 | 是否设为默认地址 |
+
+**响应示例**：
+
+```json
+{
+  "code": 0,
+  "message": "地址已更新",
+  "data": null
+}
+```
+
+---
+
+#### 2.5.4 删除收货地址
+
+**路径**：`DELETE /api/v1/addresses/{address_id}`
+
+**请求 Header**：`Authorization: Bearer {token}`
+
+**响应示例**：
+
+```json
+{
+  "code": 0,
+  "message": "地址已删除",
+  "data": null
+}
+```
+
+---
+
+#### 2.5.5 设置默认收货地址
+
+**路径**：`PUT /api/v1/addresses/{address_id}/default`
+
+**请求 Header**：`Authorization: Bearer {token}`
+
+**响应示例**：
+
+```json
+{
+  "code": 0,
+  "message": "已设为默认地址",
   "data": null
 }
 ```

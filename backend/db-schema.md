@@ -12,6 +12,7 @@
 本设计覆盖 intimoi 小程序后端所需的数据表，包括：
 
 - 会员
+- 收货地址
 - 购物车
 - 商品（WDT 商品实时拉取缓存 + 微页面用）
 - 收藏
@@ -26,6 +27,7 @@
 
 ```
 member (会员)
+  ├── member_address (收货地址)
   ├── cart (购物车)
   ├── favorites (收藏)
   └── orders (订单)
@@ -61,7 +63,36 @@ goods (商品缓存)
 
 ---
 
-### 2. cart（购物车表）
+### 2. member_address（收货地址表）
+
+存储会员的收货地址，支持多地址和默认地址。
+
+| 字段名 | 类型 | 约束 | 说明 |
+|--------|------|------|------|
+| id | BIGINT | PK, AUTO_INCREMENT | 地址 ID |
+| member_id | BIGINT | FK → member.id, NOT NULL | 会员 ID |
+| receiver_name | VARCHAR(64) | NOT NULL | 收货人姓名 |
+| receiver_mobile | VARCHAR(20) | NOT NULL | 联系电话 |
+| receiver_province | VARCHAR(32) | NOT NULL | 省份 |
+| receiver_city | VARCHAR(32) | NOT NULL | 城市 |
+| receiver_district | VARCHAR(32) | NOT NULL | 区县 |
+| receiver_address | VARCHAR(256) | NOT NULL | 详细地址 |
+| is_default | TINYINT | NOT NULL, DEFAULT 0 | 是否默认地址：0=否，1=是 |
+| created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 添加时间 |
+| updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
+
+**索引**：
+- `idx_member_id` ON (`member_id`)
+- `idx_member_default` ON (`member_id`, `is_default`)
+
+**说明**：
+- 每个会员可有多个收货地址
+- `is_default = 1` 表示默认地址，每个会员最多 1 个默认地址（新增默认时自动取消旧的默认）
+- 删除默认地址不会自动切换默认，由前端引导用户重新选择
+
+---
+
+### 3. cart（购物车表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -71,6 +102,7 @@ goods (商品缓存)
 | spec_id | VARCHAR(32) | NOT NULL | WDT 规格 ID |
 | num | INT | NOT NULL, DEFAULT 1 | 数量 |
 | selected | TINYINT | NOT NULL, DEFAULT 1 | 是否选中结算：0=未选，1=选中 |
+| stock | INT | NOT NULL, DEFAULT 0 | 当前实时库存（每次查询时 JOIN goods_spec 回填，不持久化） |
 | created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 加入时间 |
 | updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
 
@@ -83,7 +115,7 @@ goods (商品缓存)
 
 ---
 
-### 3. goods（商品缓存表）
+### 4. goods（商品缓存表）
 
 从 WDT 同步的商品主数据缓存，作为微页面展示的数据源。
 
@@ -111,7 +143,7 @@ goods (商品缓存)
 
 ---
 
-### 4. goods_spec（规格缓存表）
+### 5. goods_spec（规格缓存表）
 
 从 WDT 同步的规格数据，与 goods 一对多。
 
@@ -135,7 +167,7 @@ goods (商品缓存)
 
 ---
 
-### 5. favorites（收藏表）
+### 6. favorites（收藏表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -150,7 +182,7 @@ goods (商品缓存)
 
 ---
 
-### 6. orders（订单表）
+### 7. orders（订单表）
 
 本地缓存已推送至 WDT 的订单记录。
 
@@ -186,7 +218,7 @@ goods (商品缓存)
 
 ---
 
-### 7. order_items（订单明细表）
+### 8. order_items（订单明细表）
 
 与 orders 一对多。
 
@@ -210,7 +242,7 @@ goods (商品缓存)
 
 ---
 
-### 8. wdt_config（WDT 配置表）
+### 9. wdt_config（WDT 配置表）
 
 存储 WDT 账号配置信息（加密存储 AppSecret）。
 
@@ -227,7 +259,7 @@ goods (商品缓存)
 
 ---
 
-### 9. category（商品分类表）
+### 10. category（商品分类表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -262,6 +294,23 @@ CREATE TABLE member (
     INDEX idx_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 收货地址表
+CREATE TABLE member_address (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    member_id BIGINT NOT NULL,
+    receiver_name VARCHAR(64) NOT NULL,
+    receiver_mobile VARCHAR(20) NOT NULL,
+    receiver_province VARCHAR(32) NOT NULL,
+    receiver_city VARCHAR(32) NOT NULL,
+    receiver_district VARCHAR(32) NOT NULL,
+    receiver_address VARCHAR(256) NOT NULL,
+    is_default TINYINT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_member_id (member_id),
+    INDEX idx_member_default (member_id, is_default)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 购物车表
 CREATE TABLE cart (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -270,6 +319,7 @@ CREATE TABLE cart (
     spec_id VARCHAR(32) NOT NULL,
     num INT NOT NULL DEFAULT 1,
     selected TINYINT NOT NULL DEFAULT 1,
+    stock INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE INDEX idx_member_goods_spec (member_id, goods_id, spec_id),
