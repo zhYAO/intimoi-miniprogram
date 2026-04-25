@@ -1,9 +1,9 @@
 # intimoi 小程序数据库表结构设计
 
-> 版本：v1.2.0
-> 日期：2026-04-25
+> 版本：v1.1.0
+> 日期：2026-04-24
 > 数据库：MySQL 8.0+
-> 更新说明：v1.2.0 修复 QA 审查问题：删除积分系统（v1.1.0），appsecret 加密说明、category 自引用 FK 说明
+> 更新说明：v1.1.0 删除积分系统（member_points_log 表及相关接口），生产 WDT 地址留空
 
 ---
 
@@ -12,7 +12,6 @@
 本设计覆盖 intimoi 小程序后端所需的数据表，包括：
 
 - 会员
-- 收货地址
 - 购物车
 - 商品（WDT 商品实时拉取缓存 + 微页面用）
 - 收藏
@@ -27,7 +26,6 @@
 
 ```
 member (会员)
-  ├── member_address (收货地址)
   ├── cart (购物车)
   ├── favorites (收藏)
   └── orders (订单)
@@ -63,36 +61,7 @@ goods (商品缓存)
 
 ---
 
-### 2. member_address（收货地址表）
-
-存储会员的收货地址，支持多地址和默认地址。
-
-| 字段名 | 类型 | 约束 | 说明 |
-|--------|------|------|------|
-| id | BIGINT | PK, AUTO_INCREMENT | 地址 ID |
-| member_id | BIGINT | FK → member.id, NOT NULL | 会员 ID |
-| receiver_name | VARCHAR(64) | NOT NULL | 收货人姓名 |
-| receiver_mobile | VARCHAR(20) | NOT NULL | 联系电话 |
-| receiver_province | VARCHAR(32) | NOT NULL | 省份 |
-| receiver_city | VARCHAR(32) | NOT NULL | 城市 |
-| receiver_district | VARCHAR(32) | NOT NULL | 区县 |
-| receiver_address | VARCHAR(256) | NOT NULL | 详细地址 |
-| is_default | TINYINT | NOT NULL, DEFAULT 0 | 是否默认地址：0=否，1=是 |
-| created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 添加时间 |
-| updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
-
-**索引**：
-- `idx_member_id` ON (`member_id`)
-- `idx_member_default` ON (`member_id`, `is_default`)
-
-**说明**：
-- 每个会员可有多个收货地址
-- `is_default = 1` 表示默认地址，每个会员最多 1 个默认地址（新增默认时自动取消旧的默认）
-- 删除默认地址不会自动切换默认，由前端引导用户重新选择
-
----
-
-### 3. cart（购物车表）
+### 2. cart（购物车表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -102,7 +71,6 @@ goods (商品缓存)
 | spec_id | VARCHAR(32) | NOT NULL | WDT 规格 ID |
 | num | INT | NOT NULL, DEFAULT 1 | 数量 |
 | selected | TINYINT | NOT NULL, DEFAULT 1 | 是否选中结算：0=未选，1=选中 |
-| stock | INT | NOT NULL, DEFAULT 0 | 当前实时库存（每次查询时 JOIN goods_spec 回填，不持久化） |
 | created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 加入时间 |
 | updated_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP | 更新时间 |
 
@@ -115,7 +83,7 @@ goods (商品缓存)
 
 ---
 
-### 4. goods（商品缓存表）
+### 3. goods（商品缓存表）
 
 从 WDT 同步的商品主数据缓存，作为微页面展示的数据源。
 
@@ -143,7 +111,7 @@ goods (商品缓存)
 
 ---
 
-### 5. goods_spec（规格缓存表）
+### 4. goods_spec（规格缓存表）
 
 从 WDT 同步的规格数据，与 goods 一对多。
 
@@ -167,7 +135,7 @@ goods (商品缓存)
 
 ---
 
-### 6. favorites（收藏表）
+### 5. favorites（收藏表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
@@ -182,7 +150,7 @@ goods (商品缓存)
 
 ---
 
-### 7. orders（订单表）
+### 6. orders（订单表）
 
 本地缓存已推送至 WDT 的订单记录。
 
@@ -218,7 +186,7 @@ goods (商品缓存)
 
 ---
 
-### 8. order_items（订单明细表）
+### 7. order_items（订单明细表）
 
 与 orders 一对多。
 
@@ -242,7 +210,7 @@ goods (商品缓存)
 
 ---
 
-### 9. wdt_config（WDT 配置表）
+### 8. wdt_config（WDT 配置表）
 
 存储 WDT 账号配置信息（加密存储 AppSecret）。
 
@@ -251,7 +219,7 @@ goods (商品缓存)
 | id | BIGINT | PK, AUTO_INCREMENT | 配置 ID |
 | env | ENUM('test','prod') | UNIQUE, NOT NULL | 环境：测试/正式 |
 | appkey | VARCHAR(64) | NOT NULL | WDT AppKey |
-| appsecret | VARCHAR(128) | NOT NULL | WDT AppSecret（存储前使用 AES-256 加密，密钥由环境变量或 KMS 管理） |
+| appsecret | VARCHAR(128) | NOT NULL | WDT AppSecret（建议加密存储） |
 | sid | VARCHAR(32) | NOT NULL | WDT SID |
 | base_url | VARCHAR(128) | NOT NULL | API Base URL |
 | is_active | TINYINT | NOT NULL, DEFAULT 1 | 是否启用 |
@@ -259,13 +227,13 @@ goods (商品缓存)
 
 ---
 
-### 10. category（商品分类表）
+### 9. category（商品分类表）
 
 | 字段名 | 类型 | 约束 | 说明 |
 |--------|------|------|------|
 | id | BIGINT | PK, AUTO_INCREMENT | 分类 ID |
 | name | VARCHAR(64) | NOT NULL | 分类名称 |
-| parent_id | BIGINT | FK → category.id, NULL（自引用，顶级分类为 NULL） | 父分类 ID |
+| parent_id | BIGINT | FK → category.id, NULL | 父分类 ID（顶级为 NULL） |
 | sort | INT | NOT NULL, DEFAULT 0 | 排序（越小越靠前） |
 | is_active | TINYINT | NOT NULL, DEFAULT 1 | 是否启用 |
 | created_at | DATETIME | NOT NULL, DEFAULT CURRENT_TIMESTAMP | 创建时间 |
@@ -294,23 +262,6 @@ CREATE TABLE member (
     INDEX idx_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 收货地址表
-CREATE TABLE member_address (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    member_id BIGINT NOT NULL,
-    receiver_name VARCHAR(64) NOT NULL,
-    receiver_mobile VARCHAR(20) NOT NULL,
-    receiver_province VARCHAR(32) NOT NULL,
-    receiver_city VARCHAR(32) NOT NULL,
-    receiver_district VARCHAR(32) NOT NULL,
-    receiver_address VARCHAR(256) NOT NULL,
-    is_default TINYINT NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_member_id (member_id),
-    INDEX idx_member_default (member_id, is_default)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- 购物车表
 CREATE TABLE cart (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -319,7 +270,6 @@ CREATE TABLE cart (
     spec_id VARCHAR(32) NOT NULL,
     num INT NOT NULL DEFAULT 1,
     selected TINYINT NOT NULL DEFAULT 1,
-    stock INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE INDEX idx_member_goods_spec (member_id, goods_id, spec_id),

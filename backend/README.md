@@ -1,63 +1,58 @@
-# intimoi-backend
+# intimoi Backend
 
-intimoi 小程序后端，基于 FastAPI + WDT SDK。
+intimoi 小程序后端服务，基于 FastAPI + SQLAlchemy + MySQL。
 
-## 环境
+## 快速开始
 
-- Python 3.10+
-- FastAPI
-- Uvicorn
-- Redis（购物车会话存储）
-- httpx（WDT HTTP 调用）
-
-## 本地运行
+### 1. 安装依赖
 
 ```bash
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
 ```
 
-## 目录结构
+### 2. 配置环境变量
+
+```bash
+cp .env.example .env
+# 编辑 .env 填入真实配置
+```
+
+### 3. 初始化数据库
+
+```bash
+python scripts/init_db.py --with-sample-data
+```
+
+### 4. 启动服务
+
+```bash
+python main.py
+# 或者
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+## API 文档
+
+启动服务后访问: http://localhost:8000/docs
+
+## 项目结构
 
 ```
 backend/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py          # FastAPI 入口
-│   ├── config.py        # 配置（从环境变量读取）
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── products.py  # 商品接口
-│   │   ├── cart.py      # 购物车接口
-│   │   ├── orders.py    # 订单接口
-│   │   ├── logistics.py # 物流接口
-│   │   ├── refund.py    # 售后接口
-│   │   ├── auth.py      # 登录接口
-│   │   ├── address.py   # 收货地址接口
-│   │   └── user.py      # 用户信息接口
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── wdt.py       # WDT SDK 封装
-│   │   ├── redis.py     # Redis 客户端
-│   │   └── security.py  # JWT / 签名
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── product.py
-│   │   ├── cart.py
-│   │   ├── order.py
-│   │   └── address.py
-│   └── schemas/
-│       ├── __init__.py
-│       └── response.py  # 统一响应格式
-├── tests/
-│   ├── __init__.py
-│   ├── test_products.py
-│   ├── test_cart.py
-│   └── test_orders.py
-├── requirements.txt
-└── .env.example
+│   ├── api/v1/         # API 路由
+│   ├── models/         # SQLAlchemy 模型
+│   ├── schemas/        # Pydantic schemas
+│   ├── services/       # 业务服务（WeChat, WDT）
+│   ├── middleware/     # 中间件（JWT认证）
+│   └── utils/          # 工具函数
+├── tests/              # 单元测试
+├── scripts/            # 初始化脚本
+└── main.py            # 入口
 ```
 
-## API 基础路径
+## 运行测试
 
-`/api`
+```bash
+pytest tests/ -v
+```
