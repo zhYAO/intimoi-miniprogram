@@ -1,32 +1,31 @@
-"""应用配置，从环境变量读取。"""
-import os
-from pydantic_settings import BaseSettings
+"""Application configuration."""
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
 
 
 class Settings(BaseSettings):
-    # WDT 旺店通配置
-    wdt_appkey: str = "test_appkey"
-    wdt_appsecret: str = "test_secret"
-    wdt_sid: str = "test_sid"
-    wdt_base_url: str = "https://openapitest.huice.com/openapi/"
-
-    # Redis 配置
-    redis_host: str = "localhost"
-    redis_port: int = 6379
-    redis_db: int = 0
-    redis_password: str = ""
-
-    # JWT 配置
-    jwt_secret: str = "change-me-in-production"
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    # Database
+    database_url: str = "mysql+pymysql://root:password@localhost:3306/intimoi"
+    
+    # JWT
+    jwt_secret: str = "your-super-secret-key-change-in-production"
     jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 10080  # 7 days
+    jwt_expiration_hours: int = 24 * 7  # 7 days
+    
+    # WeChat
+    wechat_appid: str = "your-wechat-appid"
+    wechat_secret: str = "your-wechat-secret"
+    
+    # WDT
+    wdt_test_base_url: str = "https://openapitest.huice.com/openapi/"
+    wdt_prod_base_url: str = "https://openapi.huice.com/openapi/"
+    
+    # Server
+    host: str = "0.0.0.0"
+    port: int = 8000
 
-    # 服务配置
-    debug: bool = False
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-
-
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
